@@ -19,5 +19,7 @@ def img_dir_resize(dir, width, height):
 		#print(path) # debug
 		
 img_dir_resize("../data/clean/", 400, 300)
+
 img_dir_resize("../data/dirty/", 400, 300)
+
 img_dir_resize("../data/borderline/", 400, 300)
