@@ -1,0 +1,9 @@
+--- Perceptron и neuron ---
+
+1. Perceptron - множество бинарни входове, един бинарен изход
+- weights
+- thresholds
+- аналогия с невроните при човека
+
+2. Neuron - множество реални входове, един реален изход
+- activation function

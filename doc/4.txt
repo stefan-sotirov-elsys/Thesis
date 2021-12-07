@@ -1,0 +1,12 @@
+--- Gradient descent ---
+
+1. Cost function
+
+2. Gradient vector и changes vector
+
+3. Learning rate
+- не може да се намери аналитично, само с trial and error
+
+4. Gradient descent
+
+5. Stochastic gradient descent
