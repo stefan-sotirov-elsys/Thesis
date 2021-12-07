@@ -4,6 +4,7 @@ import os
 from PIL import Image
 
 def img_dir_resize(dir, width, height):
+
 	for filename in os.listdir(dir):
 	
 		path = dir + filename
