@@ -1,8 +1,0 @@
---- Аrtificial neural network ---
-
-1. input layer
-- няма threshold и activation function
-
-2. hidden layer(s)
-
-3. output layer
