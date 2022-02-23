@@ -28,6 +28,10 @@ validation_dataset = tf.keras.utils.image_dataset_from_directory(
 	batch_size = batch_size
 )
 
+test_dataset = validation_dataset.take(
+	tf.data.experimental.cardinality(validation_dataset)
+) 
+
 class_names = training_dataset.class_names
 
 # optimise the dataset
@@ -35,6 +39,8 @@ class_names = training_dataset.class_names
 training_dataset = training_dataset.cache().shuffle(1000).prefetch(buffer_size = tf.data.AUTOTUNE)
 
 validation_dataset = validation_dataset.cache().prefetch(buffer_size = tf.data.AUTOTUNE)
+
+test_dataset = test_dataset.prefetch(buffer_size = tf.data.AUTOTUNE)
 
 # create the base model
 
@@ -50,7 +56,7 @@ base_model.trainable = True
 
 # Fine-tune from this layer onwards
 
-fine_tune_start = 134
+fine_tune_start = 100
 
 # Freeze all the layers before the fine_tune_start layer
 
@@ -70,7 +76,7 @@ data_augmentation = tf.keras.Sequential([
 
 global_avg_layer = tf.keras.layers.GlobalAveragePooling2D()
 
-prediction_layer = tf.keras.layers.Dense(3)
+prediction_layer = tf.keras.layers.Dense(1)
 
 input = tf.keras.Input(shape = (width, height, 3))
 
@@ -90,13 +96,11 @@ model = tf.keras.Model(input, output)
 
 # compile the model
 
-base_learning_rate = 0.0001
-
 early_stop_callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
 
 model.compile(
-	loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True),
-	optimizer = tf.keras.optimizers.Adam(learning_rate = base_learning_rate / 10),
+	loss = tf.keras.losses.BinaryCrossentropy(from_logits = True),
+	optimizer = "adam",
 	metrics = ["accuracy"]
 )
 
@@ -108,5 +112,9 @@ history = model.fit(
 	validation_data = validation_dataset,
 	callbacks = [early_stop_callback]
 )
+
+metrics = model.evaluate(test_dataset)
+
+print("test loss: " + str(metrics[0]) + " test accuracy: " + str(metrics[1]))
 
 model.save("models/transfer")

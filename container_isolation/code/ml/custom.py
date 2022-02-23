@@ -31,6 +31,10 @@ validation_dataset = tf.keras.utils.image_dataset_from_directory(
 	batch_size = batch_size
 )
 
+test_dataset = validation_dataset.take(
+	tf.data.experimental.cardinality(validation_dataset)
+) 
+
 class_names = training_dataset.class_names
 
 # print(class_names) # debug
@@ -59,14 +63,14 @@ model = Sequential([
 	layers.MaxPooling2D(),
 	layers.Dropout(0.2),
 	layers.Flatten(),
-	layers.Dense(len(class_names))
+	layers.Dense(1)
 ])
 
 early_stop_callback = callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
 
 model.compile(
 	optimizer = 'adam',
-	loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True),
+	loss = tf.keras.losses.BinaryCrossentropy(from_logits = True),
 	metrics = ['accuracy']
 )
 
@@ -78,5 +82,9 @@ history = model.fit(
 	epochs = 100000,
 	callbacks = [early_stop_callback]
 )
+
+metrics = model.evaluate(test_dataset)
+
+print("test loss: " + str(metrics[0]) + " test accuracy: " + str(metrics[1]))
 
 model.save("models/custom")
