@@ -5,6 +5,8 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
+# prepare the dataset
+
 data_dir = "../../dataset/"
 
 width = 224
@@ -39,9 +41,13 @@ class_names = training_dataset.class_names
 
 # print(class_names) # debug
 
+# optimise the dataset
+
 training_dataset = training_dataset.cache().shuffle(1000).prefetch(buffer_size = tf.data.AUTOTUNE)
 
 validation_dataset = validation_dataset.cache().prefetch(buffer_size = tf.data.AUTOTUNE)
+
+test_dataset = test_dataset.prefetch(buffer_size = tf.data.AUTOTUNE)
 
 data_augmentation = keras.Sequential(
 	[
@@ -51,6 +57,8 @@ data_augmentation = keras.Sequential(
 		layers.RandomZoom(0.1),
 	]
 )
+
+# create the model
 
 model = Sequential([
 	data_augmentation,
@@ -68,6 +76,8 @@ model = Sequential([
 
 early_stop_callback = callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
 
+# compile the model
+
 model.compile(
 	optimizer = 'adam',
 	loss = tf.keras.losses.BinaryCrossentropy(from_logits = True),
@@ -75,6 +85,8 @@ model.compile(
 )
 
 # model.summary() # debug
+
+# train the model
 
 history = model.fit(
 	training_dataset, 
@@ -85,6 +97,6 @@ history = model.fit(
 
 metrics = model.evaluate(test_dataset)
 
-print("test loss: " + str(metrics[0]) + " test accuracy: " + str(metrics[1]))
+print("test loss: " + str(metrics[0]) + "test accuracy: " + str(metrics[1]))
 
 model.save("models/custom")
