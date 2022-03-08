@@ -1,5 +1,3 @@
-# this does the job, but is slow as shit
- 
 import cv2
 import os
 import numpy
@@ -50,7 +48,7 @@ for i in range(0, directories_count):
 
             continue
  
-        img = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 21) # this line here in particular
+        img = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 21)
     
         img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     

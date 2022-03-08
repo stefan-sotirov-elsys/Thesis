@@ -12,8 +12,10 @@ batch_size = 32
 
 training_dataset = tf.keras.utils.image_dataset_from_directory(
 	data_dir,
+	label_mode = "binary",
+	class_names = ["clean", "dirty"],
 	validation_split = 0.2,
-	subset = "training",
+	subset = "validation",
 	seed = 123,
 	image_size = (width, height),
 	batch_size = batch_size
@@ -21,6 +23,8 @@ training_dataset = tf.keras.utils.image_dataset_from_directory(
 
 validation_dataset = tf.keras.utils.image_dataset_from_directory(
 	data_dir,
+	label_mode = "binary",
+	class_names = ["clean", "dirty"],
 	validation_split = 0.2,
 	subset = "validation",
 	seed = 123,
@@ -56,7 +60,7 @@ base_model.trainable = True
 
 # Fine-tune from this layer onwards
 
-fine_tune_start = 100
+fine_tune_start = 125
 
 # Freeze all the layers before the fine_tune_start layer
 
@@ -76,7 +80,7 @@ data_augmentation = tf.keras.Sequential([
 
 global_avg_layer = tf.keras.layers.GlobalAveragePooling2D()
 
-prediction_layer = tf.keras.layers.Dense(1)
+prediction_layer = tf.keras.layers.Dense(1, activation = "sigmoid")
 
 input = tf.keras.Input(shape = (width, height, 3))
 
@@ -96,12 +100,18 @@ model = tf.keras.Model(input, output)
 
 # compile the model
 
-early_stop_callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
+early_stop_callback = tf.keras.callbacks.EarlyStopping(monitor = "loss", patience = 5)
 
 model.compile(
-	loss = tf.keras.losses.BinaryCrossentropy(from_logits = True),
+	loss = tf.keras.losses.BinaryCrossentropy(from_logits = False),
 	optimizer = "adam",
-	metrics = ["accuracy"]
+	metrics = [
+		tf.keras.metrics.FalseNegatives(),
+		tf.keras.metrics.FalsePositives(),
+		tf.keras.metrics.TrueNegatives(),
+		tf.keras.metrics.TruePositives(),
+		"accuracy"
+	]
 )
 
 # train the model
@@ -113,8 +123,6 @@ history = model.fit(
 	callbacks = [early_stop_callback]
 )
 
-metrics = model.evaluate(test_dataset)
-
-print("test loss: " + str(metrics[0]) + " test accuracy: " + str(metrics[1]))
+#metrics = model.evaluate(test_dataset)
 
 model.save("models/transfer")
