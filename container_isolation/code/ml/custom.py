@@ -2,7 +2,7 @@ import tensorflow as tf
 
 # prepare the dataset
 
-data_dir = "../../dataset/"
+data_dir = "../../datasets/training/"
 
 width = 224
 

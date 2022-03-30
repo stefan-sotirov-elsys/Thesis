@@ -7,7 +7,7 @@ import cv2
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = '3'
 
-model = tf.keras.models.load_model("transfer/")
+model = tf.keras.models.load_model("model/")
 
 listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -71,9 +71,25 @@ while True:
 
                 img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
 
-                img = cv2.resize(img, (224, 224))
+                img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+                hue = (img_hsv[:, :, 0] < 100) * (img_hsv[:, :, 0] > 3)
+            
+                saturation = (img_hsv[:, :, 1] > 70)
+            
+                value = (img_hsv[:, :, 2] > 120)
+            
+                mask = saturation * value * hue
+            
+                img_hsv[:, :, 0] *= mask
+            
+                img_hsv[:, :, 1] *= mask
+            
+                img_hsv[:, :, 2] *= mask
+            
+                img = cv2.cvtColor(img_hsv, cv2.COLOR_HSV2RGB)
 
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                img = cv2.resize(img, (224, 224))
 
                 img = numpy.expand_dims(img, axis = 0)
 

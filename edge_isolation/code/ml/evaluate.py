@@ -3,7 +3,7 @@ import tensorflow as tf
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = '3'
 
-data_dir = "../../dataset/"
+data_dir = "../../datasets/test/"
 
 width = 224
 

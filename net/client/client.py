@@ -6,6 +6,8 @@ def program_exit():
 
     connection.close()
 
+    print("exiting...")
+
     quit()
 
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,7 +20,7 @@ try:
 
 except:
 
-    print("connection could not be established\nexiting...")
+    print("connection could not be established")
 
     program_exit()
 
@@ -29,8 +31,6 @@ while True:
     path = input("path to file: ")
 
     if path == '':
-
-        print("exiting...")
 
         program_exit()
 
@@ -56,7 +56,7 @@ while True:
             
             print("connection to the server is lost")
 
-            continue
+            program_exit()
 
         print("sent " + path)
 

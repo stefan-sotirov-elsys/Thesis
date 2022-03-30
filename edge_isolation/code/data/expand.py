@@ -3,7 +3,7 @@ import shutil
 
 directories_count = 2
 
-directories_paths = ["../../dataset/clean/", "../../dataset/dirty/"]
+directories_paths = ["../../datasets/training/clean/", "../../datasets/training/dirty/"]
 
 directories_contents = []
 
